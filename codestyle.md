@@ -1,39 +1,46 @@
-# 代码规范（Backend）
+# Code Style (Backend)
 
-本项目遵循 **PEP 8 — Style Guide for Python Code**
-（来源：https://peps.python.org/pep-0008/），并做如下落地约定。
+This project follows the **PEP 8 — Style Guide for Python Code**
+(source: https://peps.python.org/pep-0008/), with the following
+project-specific conventions.
 
-## 1. 格式
+## 1. Formatting
 
-- 缩进使用 4 个空格，不使用 Tab。
-- 每行最大长度 79 个字符；注释与文档字符串最大 72 个字符
-  （docstring 中以展示为例外）。
-- 顶层函数与类之间空 2 行，类内方法之间空 1 行。
+- Indent with 4 spaces; never use tabs.
+- Limit lines to 79 characters; limit comments and docstrings to 72
+  characters (except where longer lines are needed for display).
+- Separate top-level functions and classes with 2 blank lines; separate
+  methods inside a class with 1 blank line.
 
-## 2. 命名
+## 2. Naming
 
-| 对象 | 约定 | 示例 |
+| Object | Convention | Example |
 | --- | --- | --- |
-| 模块 / 包 | 全小写，必要时下划线 | `calculator_service` |
-| 类 | 大驼峰（CapWords） | `ExpressionError` |
-| 函数 / 变量 / 实例属性 | 全小写下划线 | `fetch_all_records` |
-| 常量 | 全大写下划线 | `DB_PATH` |
-| 私有成员 | 单下划线前缀 | `_parse_expr` |
+| Modules / packages | lowercase, underscores if needed | `calculator_service` |
+| Classes | CapWords | `ExpressionError` |
+| Functions / variables / attributes | lowercase_with_underscores | `fetch_all_records` |
+| Constants | UPPER_CASE_WITH_UNDERSCORES | `DB_PATH` |
+| Private members | single leading underscore | `_parse_expr` |
 
-## 3. 导入
+## 3. Imports
 
-- 每个 import 单独成行，按顺序分组：标准库、第三方库、本地模块，
-  组之间空一行。
-- 禁止使用 `from x import *`。
+- One import per line, grouped in order: standard library, third-party,
+  local modules, with a blank line between groups.
+- Never use `from x import *`.
 
-## 4. 注释与文档字符串
+## 4. Comments and Docstrings
 
-- 公共模块、类、函数必须写 docstring，说明职责、参数、返回值与异常。
-- 行内注释与代码之间至少两个空格，以 `# ` 开头。
+- Public modules, classes and functions must have docstrings stating
+  responsibility, arguments, return values and raised exceptions.
+- Inline comments are separated from code by at least two spaces and
+  start with `# `.
 
-## 5. 其他约定
+## 5. Other Conventions
 
-- 禁止使用 `eval`、`exec` 或任何等价的任意代码执行方式处理用户输入。
-- 字符串格式化优先使用 f-string 或 `%` 形式，保持文件内统一。
-- 数据库访问使用参数化 SQL，禁止字符串拼接 SQL。
-- 异常处理遵循“捕获具体异常”原则，不使用裸 `except:`。
+- Never process user input with `eval`, `exec`, or any equivalent
+  arbitrary-code execution facility.
+- Prefer f-strings or `%` formatting for string formatting; keep one
+  style consistent within a file.
+- Use parameterized SQL for all database access; never build SQL by
+  string concatenation.
+- Catch specific exceptions only; never use a bare `except:`.

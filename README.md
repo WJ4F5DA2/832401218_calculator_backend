@@ -1,113 +1,117 @@
 # 832401218 Calculator Backend
 
-前后端分离计算器系统的**后端**部分，基于 Flask + SQLite 实现。
-负责表达式解析与计算、计算历史的持久化存储，对外提供 HTTP/JSON API。
+The **back end** of a front-end/back-end separated calculator system,
+built with Flask + SQLite.
+It parses and evaluates expressions, persists calculation history,
+and exposes HTTP/JSON APIs.
 
-## 技术栈
+## Tech Stack
 
-| 组件 | 技术 |
+| Component | Technology |
 | --- | --- |
-| 语言 | Python 3.10+ |
-| Web 框架 | Flask 3.x |
-| 数据库 | SQLite（标准库 sqlite3，无需额外安装） |
-| 表达式解析 | 手写 tokenizer + 递归下降解析器（不使用 eval/exec） |
+| Language | Python 3.10+ |
+| Web framework | Flask 3.x |
+| Database | SQLite (stdlib sqlite3, no extra install) |
+| Expression parsing | Hand-written tokenizer + recursive-descent parser (no eval/exec) |
 
-## 运行环境
+## Runtime Environment
 
-- Python 3.10 或更高版本
-- 无其他系统依赖（SQLite 为 Python 内置）
+- Python 3.10 or higher
+- No other system dependencies (SQLite ships with Python)
 
-## 安装与启动
+## Installation and Startup
 
 ```bash
-# 1. 创建并激活虚拟环境（可选但推荐）
+# 1. Create and activate a virtual environment (optional but recommended)
 python -m venv venv
 venv\Scripts\activate        # Windows
 # source venv/bin/activate   # Linux / macOS
 
-# 2. 安装依赖
+# 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. 启动服务（默认 0.0.0.0:5000）
+# 3. Start the service (defaults to 0.0.0.0:5000)
 python run.py
 ```
 
-服务启动后可通过 `GET http://localhost:5000/api/health` 检查运行状态。
+Once started, verify with `GET http://localhost:5000/api/health`.
 
-## 数据库初始化
+## Database Initialization
 
-无需手动初始化：服务首次启动时会自动在项目根目录创建 `calculator.db`
-并建表。表结构如下：
+No manual setup is needed: on first start the service creates `calculator.db`
+in the project root and creates the table automatically.
 
 ```sql
 CREATE TABLE calculation_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    expression TEXT NOT NULL,   -- 计算表达式，如 (1+2)*3
-    result TEXT NOT NULL,       -- 计算结果，如 9
-    created_at TEXT NOT NULL    -- 计算时间，如 2026-10-03 19:33:55
+    expression TEXT NOT NULL,   -- e.g. (1+2)*3
+    result TEXT NOT NULL,       -- e.g. 9
+    created_at TEXT NOT NULL    -- e.g. 2026-10-03 19:33:55
 );
 ```
 
-如需重置数据，直接删除 `calculator.db` 文件后重启服务即可。
+To reset the data, simply delete `calculator.db` and restart the service.
 
-## API 一览
+## API Overview
 
-| 方法 | 路径 | 说明 |
+| Method | Path | Description |
 | --- | --- | --- |
-| GET | `/api/health` | 健康检查 |
-| POST | `/api/calculate` | 计算表达式并写入历史 |
-| GET | `/api/history` | 查询全部计算历史（按 id 倒序） |
-| DELETE | `/api/history/{id}` | 删除指定历史记录 |
-| DELETE | `/api/history` | 清空全部历史记录（扩展功能） |
+| GET | `/api/health` | Health check |
+| POST | `/api/calculate` | Evaluate an expression and store the record |
+| GET | `/api/history` | Return all history records (newest first) |
+| DELETE | `/api/history/{id}` | Delete one history record |
+| DELETE | `/api/history` | Clear all history records (optional feature) |
 
-### 计算请求示例
+### Calculate Request Example
 
-请求：`POST /api/calculate`
+Request: `POST /api/calculate`
 
 ```json
 { "expression": "(1+2)*3" }
 ```
 
-成功响应（HTTP 200）：
+Success response (HTTP 200):
 
 ```json
 { "success": true, "expression": "(1+2)*3", "result": "9", "id": 1, "created_at": "2026-10-03 19:33:55" }
 ```
 
-失败响应（HTTP 400，例如除零、非法表达式）：
+Error response (HTTP 400, e.g. division by zero or invalid expression):
 
 ```json
 { "success": false, "message": "Division by zero" }
 ```
 
-## 前后端连接方式
+## How the Front End Connects
 
-- 服务默认监听 `0.0.0.0:5000`，已开启 CORS，允许任意前端跨域调用。
-- 前端项目中的 API 地址配置项（`script.js` 中的 `API_BASE`）
-  需指向本服务的 `/api` 前缀，例如 `http://localhost:5000/api`。
-- 部署后只需将前端的 `API_BASE` 改为后端公网地址即可。
+- The service listens on `0.0.0.0:5000` by default and sends CORS headers,
+  so any front end can call it cross-origin.
+- Point the front end's API configuration (`API_BASE` in `script.js`)
+  at this service's `/api` prefix, e.g. `http://localhost:5000/api`.
+- After deployment, just change `API_BASE` to the public back-end URL.
 
-## 项目结构
+## Project Structure
 
 ```
 832401218_calculator_backend/
-├── run.py                     # 启动入口
+├── run.py                     # Entry point
 ├── requirements.txt
 ├── src/
-│   ├── app.py                 # Flask 应用工厂（含 CORS 配置）
-│   ├── controller/routes.py   # HTTP 路由层
+│   ├── app.py                 # Flask application factory (with CORS)
+│   ├── controller/routes.py   # HTTP routes
 │   ├── service/
-│   │   ├── calculator_service.py  # 表达式 tokenizer + 递归下降解析器
-│   │   └── history_service.py     # 计算与历史的业务逻辑
-│   └── model/database.py      # SQLite 数据访问层
-└── test_api.py                # API 冒烟测试（Flask test client）
+│   │   ├── calculator_service.py  # Expression tokenizer + recursive-descent parser
+│   │   └── history_service.py     # Calculation and history business logic
+│   └── model/database.py      # SQLite data access layer
+└── test_api.py                # API smoke tests (Flask test client)
 ```
 
-## 测试
+## Testing
 
 ```bash
 python test_api.py
 ```
 
-覆盖：四则运算、复合表达式（优先级、括号、一元正负号、小数）、
-非法表达式、除零、历史增删查、清空历史等场景。
+Covers: basic arithmetic, compound expressions (precedence, parentheses,
+unary +/-, decimals), invalid expressions, division by zero, history
+insert/query/delete, and clearing history.
