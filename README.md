@@ -36,6 +36,15 @@ python run.py
 
 Once started, verify with `GET http://localhost:5000/api/health`.
 
+## Deployment
+
+The service is deployed on **PythonAnywhere** (free tier):
+
+- **Live API**: https://wj4f5da2.pythonanywhere.com/api
+- Health check: `GET https://wj4f5da2.pythonanywhere.com/api/health`
+- The front end is served from the same host via a static-files mapping:
+  https://wj4f5da2.pythonanywhere.com/
+
 ## Database Initialization
 
 No manual setup is needed: on first start the service creates `calculator.db`
@@ -88,7 +97,8 @@ Error response (HTTP 400, e.g. division by zero or invalid expression):
   so any front end can call it cross-origin.
 - Point the front end's API configuration (`API_BASE` in `script.js`)
   at this service's `/api` prefix, e.g. `http://localhost:5000/api`.
-- After deployment, just change `API_BASE` to the public back-end URL.
+- After deployment, just change `API_BASE` to the public back-end URL
+  (currently `https://wj4f5da2.pythonanywhere.com/api`).
 
 ## Project Structure
 
