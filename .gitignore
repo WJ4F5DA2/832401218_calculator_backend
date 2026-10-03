@@ -1,0 +1,7 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Runtime database (auto-created on first start)
+calculator.db
